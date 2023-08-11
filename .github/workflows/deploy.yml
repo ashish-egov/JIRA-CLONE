@@ -1,20 +1,21 @@
-name: Deploy to GitHub Page
+name: Github Page Deploy Pages
 
 on:
   push:
-    branches:
-      - develop
+    branches: [develop]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Install Dependencies
-      run: npm ci
+      - uses: actions/checkout@v2
 
-    - name: Deploy
-      run: npm run deploy
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "14.21.3"
+      
+      - run: git checkout develop
+      
+      - run: npm ci
 
-permissions:
-  contents: write
+      - run: npm run build
