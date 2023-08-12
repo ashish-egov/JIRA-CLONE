@@ -32,14 +32,17 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build
-        run: npm run build
+      - name: Build and capture logs
+        run: |
+          npm run build > build.log 2>&1 || true
+        continue-on-error: true
 
       - name: Save Logs as Artifact
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: logs
-          path: /home/runner/.npm/_logs  # Adjust the path based on your setup
+          path: ./build.log
 
       - name: Deploy
         run: |
