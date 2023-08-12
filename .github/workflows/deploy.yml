@@ -27,6 +27,7 @@ jobs:
       - name: First Deploy Attempt
         id: first-deploy
         run: npm run deploy
+        continue-on-error: true
 
       - name: Second Deploy Attempt
         id: second-deploy
