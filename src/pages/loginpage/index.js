@@ -123,7 +123,7 @@ const LoginPage = () => {
       </p>
 
       <button className="lng-button" onClick={toggleLanguage}>
-        {language === 'en' ? 'Switch to Frencho' : 'Passer en anglais'}
+        {language === 'en' ? 'Switch to French' : 'Passer en anglais'}
       </button>
       {/* Rest of your code */}
     </div>
