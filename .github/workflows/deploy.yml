@@ -40,4 +40,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: surefire-reports
-        path: mymeeave/target/surefire-reports/**
+        path: /
