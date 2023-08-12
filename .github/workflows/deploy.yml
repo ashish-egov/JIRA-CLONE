@@ -22,13 +22,16 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
+    - name: Change branch
+      run: git checkout develop
+
     - name: Install dependencies
       run: npm install
 
     - name: Deploy
       run: |
         git remote set-url origin https://${github_token}@github.com/${repository}
-        npm run deploy
+        npm run deploy --force
       env:
         github_token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
         repository: ${{ github.repository }}
