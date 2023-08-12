@@ -38,3 +38,9 @@ jobs:
       env:
         github_token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
         repository: ${{ github.repository }}
+
+    - name: Save Logs as Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: logs
+        path: /home/runner/.npm/_logs 
