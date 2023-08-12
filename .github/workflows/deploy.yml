@@ -6,25 +6,17 @@ on:
       - develop
 
 jobs:
-  build:
-
+  deploy:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
-
-    strategy:
-      matrix:
-        node-version: [14.21.3]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Node.js ${{ matrix.node-version }}
+      - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 14.21.3
 
       - name: Change branch
         run: git checkout develop
@@ -32,22 +24,20 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build and capture logs
+      - name: First Deploy Attempt
+        id: first-deploy
+        run: npm run deploy
+
+      - name: Second Deploy Attempt
+        id: second-deploy
+        if: steps.first-deploy.outcome != 'success'
         run: |
-          npm run build > build.log 2>&1 || true
+          rm -f package-lock.json
+          npm run deploy
         continue-on-error: true
 
-      - name: Save Logs as Artifact
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: logs
-          path: ./build.log
-
-      - name: Deploy
-        run: |
-          git remote set-url origin https://${github_token}@github.com/${repository}
-          npm run deploy
-        env:
-          github_token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
-          repository: ${{ github.repository }}
+      - name: Third Deploy Attempt
+        id: third-deploy
+        if: steps.first-deploy.outcome != 'success' && steps.second-deploy.outcome != 'success'
+        run: npm run deploy --force
+        continue-on-error: true
