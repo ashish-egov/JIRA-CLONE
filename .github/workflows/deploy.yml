@@ -1,8 +1,9 @@
-name: CI/CDd
+name: CI/CD
 
 on:
   push:
-    branches: [ develop ]
+    branches:
+      - develop
 
 jobs:
   build:
@@ -17,30 +18,33 @@ jobs:
         node-version: [14.21.3]
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Change branch
-      run: git checkout develop
+      - name: Change branch
+        run: git checkout develop
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Deploy
-      run: |
-        git remote set-url origin https://${github_token}@github.com/${repository}
-        npm run deploy
-      env:
-        github_token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
-        repository: ${{ github.repository }}
+      - name: Build
+        run: npm run build
 
-    - name: Save Logs as Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: logs
-        path: /home/runner/.npm/_logs 
+      - name: Save Logs as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: logs
+          path: /home/runner/.npm/_logs  # Adjust the path based on your setup
+
+      - name: Deploy
+        run: |
+          git remote set-url origin https://${github_token}@github.com/${repository}
+          npm run deploy
+        env:
+          github_token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
+          repository: ${{ github.repository }}
