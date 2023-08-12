@@ -26,17 +26,12 @@ jobs:
         env:
           CI: false
 
-      - name: Change branch
-        run: git checkout develop
-        env:
-          CI: false
-
       - name: Install dependencies
         run: npm install
         env:
           CI: false
 
-      - name: First Deploy Attempt
+      - name: Deploy
         run: |
           git config --global user.name $user_name
           git config --global user.email $user_email
