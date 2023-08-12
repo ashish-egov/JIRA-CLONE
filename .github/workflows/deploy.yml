@@ -20,12 +20,18 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14.21.3
+        env:
+          CI: false
 
       - name: Change branch
         run: git checkout develop
+        env:
+          CI: false
 
       - name: Install dependencies
         run: npm install
+        env:
+          CI: false
 
       - name: First Deploy Attempt
         id: first-deploy
@@ -37,6 +43,7 @@ jobs:
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
           repository: ${{ github.repository }}
+          CI: false
         continue-on-error: true
 
       - name: Second Deploy Attempt
@@ -45,23 +52,10 @@ jobs:
         run: |
           git config --global user.name $user_name
           git config --global user.email $user_email
-          rm -f package-lock.json
-          npm run deploy
-        env:
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          repository: ${{ github.repository }}
-        continue-on-error: true
-
-      - name: Third Deploy Attempt
-        id: third-deploy
-        if: steps.first-deploy.outcome != 'success' && steps.second-deploy.outcome != 'success'
-        run: |
-          git config --global user.name $user_name
-          git config --global user.email $user_email
           npm run deploy --force
         env:
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
           repository: ${{ github.repository }}
+          CI: false
         continue-on-error: true
